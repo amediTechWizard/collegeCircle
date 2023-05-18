@@ -17,7 +17,7 @@ Usage
 
 Contributors
 
-    Your Name
+    David Amedi
 
 License
 
