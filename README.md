@@ -1,4 +1,4 @@
-# Social Networking Platform for Education
+# College Social Networking System
 Description
 
 This is a web-based platform designed for use in educational settings. It includes gamification elements and social networking features to promote student engagement and collaboration.
