@@ -9,7 +9,9 @@
             </li>
             {% for topic in topics %}
             <li>
-              <a href="{% url 'home' %}?q={{topic.name}}">{{topic.name}}<span>{{topic.room_set.all.count}}</span></a>
+              <a href="{% url 'home' %}?q={{topic.name}}">{{topic.name}} ({{topic.room_set.all.count}})
+                <span class="topic-follow" data-action="follow" data-id="da8d6b51-253b-496e-9a22-31f70397ee69" data-url="/?q={{topic.name}}">Follow</span>
+              </a>
             </li>
             {% endfor %}
           </ul>
