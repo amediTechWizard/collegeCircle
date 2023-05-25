@@ -18,7 +18,8 @@
 
           <div class="profile__info">
             <h3>{{user.name}}</h3>
-            <p>@{{user.username}} <span style="color: #b2bdbd;; font-size: 14px;"><span id="follow-count">0</span> Followers</span></p>
+            <p>@{{user.username}} <span style="color: #b2bdbd;; font-size: 14px;"><span id="follow-count">0</span> Followers</span> 
+              <span style="color: #b2bdbd;; font-size: 14px;"><span id="follow-count">{{user_rooms}}</span> Rooms</span></p>
 
             {% if request.user == user %}
               <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>

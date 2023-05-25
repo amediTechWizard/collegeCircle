@@ -43,6 +43,8 @@
       </svg>
       {% if room.no_of_likes == 0 %}
       No Likes
+      {% elif room.no_of_likes == 1 %}
+      {{room.no_of_likes}} Like
       {% else %}
       {{room.no_of_likes}} Likes
       {% endif %}
