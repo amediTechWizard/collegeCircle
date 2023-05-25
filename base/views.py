@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .models import Room, Topic, Message, User
+from .models import Room, Topic, Message, User, LikeRoom
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
@@ -191,3 +191,24 @@ def topicsPage(request):
 def activityPage(request):
     room_messages = Message.objects.all()
     return render(request, 'base/activity.html', {'room_messages': room_messages})
+
+@login_required(login_url='login')
+def like_room(request):
+    username = request.user.username
+    room_id = request.GET.get('room_id')
+
+    room = Room.objects.get(id=room_id)
+
+    like_filter = LikeRoom.objects.filter(room_id=room_id, username=username).first()
+
+    if like_filter == None:
+        new_like = LikeRoom.objects.create(room_id=room_id, username=username)
+        new_like.save()
+        room.no_of_likes = room.no_of_likes+1
+        room.save()
+        return redirect('home')
+    else:
+        like_filter.delete()
+        room.no_of_likes = room.no_of_likes-1
+        room.save()
+        return redirect('home')

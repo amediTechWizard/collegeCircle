@@ -31,6 +31,7 @@ class Room(models.Model):
     participants = models.ManyToManyField(User, related_name='participants', blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    no_of_likes = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['-updated', '-created']
@@ -51,3 +52,10 @@ class Message(models.Model):
 
     def __str__(self):
         return self.body[0:50]
+    
+class LikeRoom(models.Model):
+    room_id = models.CharField(max_length=500)
+    username = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.username
