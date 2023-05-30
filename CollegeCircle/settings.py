@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
 
     'rest_framework',
+    'social_django',
 ]
 
 AUTH_USER_MODEL = 'base.user'
@@ -70,6 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -106,6 +109,27 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTHENTICATION_BACKENDS = [
+
+
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.linkedin.LinkedinOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+SOCIAL_AUTH_FACEBOOK_KEY = '966592987720832'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'c88d5c5d776689aaed26673bd62710ce'
+
+SOCIAL_AUTH_GITHUB_KEY = 'dd184fced7862f23370e'
+SOCIAL_AUTH_GITHUB_SECRET = '14ffff8d967d97b654d94bd81000b39b1bd9d77a'
+
+SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '77uol9ma8u46ur'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'EdFGY2GeCMoMz0VR'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 # Internationalization

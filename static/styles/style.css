@@ -566,6 +566,71 @@ a {
   text-decoration: underline;
 }
 
+ /* === socials ==== */
+@media (min-width: 768px) {
+  .omb_row-sm-offset-3 div:first-child[class*="col-"] {
+      margin-left: 0%;
+      /* margin-left: 25%; */
+  }
+}
+
+.omb_row-sm-offset-3 {
+  display: flex;
+  justify-content: center; /* Align buttons horizontally */
+  align-items: center; /* Align buttons vertically */
+}
+
+.omb_row-sm-offset-3 .col-xs-4 {
+  flex: 0 0 auto; /* Prevent buttons from stretching */
+  margin: 0 5px; /* Add margin between buttons */
+}
+
+@media (max-width: 767px) {
+  .omb_row-sm-offset-3 .col-xs-4 {
+    flex-basis: 33.33%; /* Show 3 buttons per row on smaller screens */
+  }
+}
+
+.omb_login .omb_socialButtons a {
+color: white;
+opacity:0.9;
+}
+.omb_login .omb_socialButtons a:hover {
+  color: white;
+opacity:1;    	
+}
+.omb_login .omb_socialButtons .omb_btn-facebook {background: #3b5998;}
+.omb_login .omb_socialButtons .omb_btn-github {background: #1b1e1f;}
+.omb_login .omb_socialButtons .omb_btn-linkedin {background: #0092e4;}
+
+.omb_login .omb_loginOr {
+position: relative;
+font-size: 1.5em;
+color: #aaa;
+margin-top: 1em;
+margin-bottom: 1em;
+padding-top: 0.5em;
+padding-bottom: 0.5em;
+}
+.omb_login .omb_loginOr .omb_hrOr {
+background-color: #cdcdcd;
+height: 1px;
+margin-top: 0px !important;
+margin-bottom: 0px !important;
+}
+.omb_login .omb_loginOr .omb_spanOr {
+display: block;
+position: absolute;
+color: #fff;
+left: 50%;
+top: -0.6em;
+margin-left: -1.5em;
+background-color: #3f4156;
+width: 3em;
+text-align: center;
+}
+
+
 /*==============================
 =>  Topics
 ================================*/
