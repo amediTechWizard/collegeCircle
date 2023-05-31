@@ -6,10 +6,13 @@ urlpatterns = [
     path('logout/', views.logoutUser, name="logout"),
     path('register/', views.registerPage, name="register"),
     path('like-room/', views.like_room, name="like-room"),
+    path('follow/', views.follow, name="follow"),
 
     path('', views.home, name="home"),
     path('room/<str:pk>/', views.room, name="room"),
-    path('profile/<str:pk>/', views.userProfile, name="user-profile"),
+    path('profile/<str:username>/', views.profile, name="profile"),
+    path('profile/', views.profile, name="profile"),
+
 
     path('create-room/', views.createRoom, name="create-room"),
     path('update-room/<str:pk>/', views.updateRoom, name="update-room"),

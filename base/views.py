@@ -1,13 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .models import Room, Topic, Message, User, LikeRoom
+from .models import Room, Topic, Message, User, LikeRoom, FollowersCount
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import RoomForm, userForm, MyUserCreationForm
+from django.urls import reverse
 
 # Create your views here.
 
@@ -136,14 +137,28 @@ def updateRoom(request, pk):
     context = {'form': form, 'topics': topics, 'room': room}
     return render(request, 'base/room_form.html', context)
 
-def userProfile(request, pk):
-    user = User.objects.get(id=pk)
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
     rooms = user.room_set.all()
     user_rooms = rooms.count()
     room_messages = user.message_set.all()
     topics = Topic.objects.all()
-    context = {'user': user, 'rooms': rooms, 'user_rooms': user_rooms, 'room_messages': room_messages, 'topics': topics}
+
+    ###GET BACK TO THIS###
+    # follower = username
+    # user = pk
+    # if FollowersCount.objects.filter(follower=follower, user=user).first():
+    #     button_text = 'Unfolow'
+    # else:
+    #     button_text = 'Follow'
+
+    user_followers = len(FollowersCount.objects.filter(user=username))
+    user_following = len(FollowersCount.objects.filter(follower=username))
+        
+    context = {'user': user, 'rooms': rooms, 'user_rooms': user_rooms, 'room_messages': room_messages, 'topics': topics, 'user_followers': user_followers, 'user_following': user_following}
     return render(request, 'base/profile.html', context)
+    
+
 
 @login_required(login_url='login')
 def deleteRoom(request, pk):
@@ -180,7 +195,7 @@ def updateUser(request):
         form = userForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('user-profile', pk=user.id)
+            return redirect('profile', user.username)
 
     return render(request, 'base/update-user.html', {'form': form})
 
@@ -212,4 +227,21 @@ def like_room(request):
         like_filter.delete()
         room.no_of_likes = room.no_of_likes-1
         room.save()
+        return redirect('home')
+
+@login_required(login_url='login')
+def follow(request):
+    if request.method == 'POST':
+        follower = request.POST['follower']
+        user = request.POST['user']
+
+        if FollowersCount.objects.filter(follower=follower, user=user).first():
+            delete_follower = FollowersCount.objects.get(follower=follower, user=user)
+            delete_follower.delete()
+            return redirect('/profile/'+user)
+        else:
+            new_follower = FollowersCount.objects.create(follower=follower, user=user)
+            new_follower.save()
+            return redirect('/profile/'+user)
+    else:
         return redirect('home')

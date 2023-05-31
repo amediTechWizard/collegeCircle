@@ -43,6 +43,13 @@
 // }
 
 // Menu
+const followButton = document.getElementById('followbtn');
+const followForm = document.getElementById('followForm');
+
+followButton.addEventListener('click', function(event) {
+  event.preventDefault(); // Prevents the default form submission
+  followForm.submit(); // Manually submit the form
+});
 
 const dropdownMenu = document.querySelector(".dropdown-menu");
 const dropdownButton = document.querySelector(".dropdown-button");
@@ -67,3 +74,5 @@ if (photoInput)
 // Scroll to Bottom
 const conversationThread = document.querySelector(".room__box");
 if (conversationThread) conversationThread.scrollTop = conversationThread.scrollHeight;
+
+
