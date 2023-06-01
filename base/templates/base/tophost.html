@@ -2,35 +2,24 @@
     <div class="activities__header">
         <h2>Top Hosts</h2>
     </div>
-    
-    <div class="host__wrapper">
-        <a href="/profile/dennisivy/" class="roomListRoom__author">
-            <div class="avatar avatar--large">
-                <img src="https://studybud.s3.amazonaws.com/dennis.jpg">
-            </div>           
-            <h4 style="color: aliceblue;">Dennis Ivy</h4>
-        </a>
-        
-        <a href="/profile/dennisivy/" class="roomListRoom__author">
-            <span class="host__follow">Follow</span>
-           </a>
-        
-    </div>
-    
-    <div class="host__wrapper">
-        <a href="/profile/123/" class="roomListRoom__author">
-            <div class="avatar avatar--large">
-                <img src="https://studybud.s3.amazonaws.com/avatar.svg">
-            </div>           
-            <h4 style="color: aliceblue;">123</h4>
-        </a>
-        
-        <a href="/profile/123/" class="roomListRoom__author">
-            <span class="host__follow">Follow</span>
-           </a>
-        
-    </div>
-    
 
+    {% for user in suggested_users %}
+    <div class="host__wrapper">
+        <a href="/profile/{{ user.username }}" class="roomListRoom__author">
+            <div class="avatar avatar--large">
+                <img src="{{ user.avatar.url }}">
+            </div>           
+            <h4 style="color: aliceblue;">{{ user.username }}</h4>
+        </a>
+        <a href="/profile/{{ user.username }}" class="roomListRoom__author">
+        <form id="followForm" action="{% url 'follow' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value="{{ request.user.username}}" name="follower" />
+            <input type="hidden" value="{{ user.username }}" name="user" />
+            <button type="submit" id="followbtn" class="host__follow" data-otheruser="d4957522-8b61-42bf-9d33-2f55cac0cad9" data-action="follow">Follow</button>
+        </form>
+            </a>
+    </div>
+    {% endfor %}
 </div>
 <br>

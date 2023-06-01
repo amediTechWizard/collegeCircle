@@ -269,6 +269,108 @@ a {
   gap: 1rem;
 }
 
+.page-link {
+  color: white;
+}
+
+.host__wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 1.5em;
+  color: #fff;
+}
+
+.avatar {
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+  border: 2px solid var(--color-main);
+}
+
+.avatar.avatar--large::after {
+
+width: 1rem;
+height: 1rem;
+bottom: 2px;
+right: 3.5px;
+
+}
+
+.host__wrapper .avatar.avatar--large img {
+  display: block;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+}
+
+.host__follow {
+  display: block;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-bg);
+  border-radius: 3px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  border: none;
+  outline: none;
+}
+
+/* ================= moderators form assign ================= */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.moderators-select {
+  width: 300px;
+  height: 200px;
+  padding: 10px;
+  border: 1px solid var(--color-bg);
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  background-color: var(--color-bg);
+}
+
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.select-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #555;
+}
+
+.moderators-button {
+  padding: 8px 16px;
+  background-color: var(--color-bg);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.moderators-button:hover {
+  background-color: var(--color-success);
+}
+
+.moderators-button:active {
+  background-color: #3c903c;
+}
+
+/* ===================== end assign moderator form ====================== */
 @media screen and (min-width: 500px) {
   .mobile-menu {
     display: none;
@@ -625,7 +727,7 @@ color: #fff;
 left: 50%;
 top: -0.6em;
 margin-left: -1.5em;
-background-color: #3f4156;
+background-color: var(--color-dark);
 width: 3em;
 text-align: center;
 }
@@ -663,14 +765,18 @@ text-align: center;
   color: var(--color-main);
 }
 
-.topics__list li a span {
+.topics__list li a button {
   padding: 0.5rem 1rem;
   background-color: var(--color-dark);
   border-radius: 3px;
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: 1px;
+  border: none; /* Add this line to remove the button border */
+  color: var(--color-main-light); /* Add this line to set the button text color to white */
+  outline: none; /* Add this line to remove the button outline when focused */
 }
+
 
 .topics-page a:hover {
   text-decoration: underline;

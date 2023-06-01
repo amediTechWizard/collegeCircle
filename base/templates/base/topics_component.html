@@ -10,7 +10,12 @@
             {% for topic in topics %}
             <li>
               <a href="{% url 'home' %}?q={{topic.name}}">{{topic.name}} ({{topic.room_set.all.count}})
-                <span class="topic-follow" data-action="follow" data-id="da8d6b51-253b-496e-9a22-31f70397ee69" data-url="/?q={{topic.name}}">Follow</span>
+                <form id="followForm" action="{% url 'follow-topic' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" value="{{ request.user.username }}" name="follower" />
+                  <input type="hidden" value="{{ topic.name }}" name="topic_name" />
+                  <button id="followButton" class="topic-follow" data-action="follow" data-id="da8d6b51-253b-496e-9a22-31f70397ee69" data-url="/?q={{topic.name}}">Follow</button>
+                </form>
               </a>
             </li>
             {% endfor %}

@@ -60,11 +60,15 @@
             </div>
         </div>
         <!-- Room List End -->
+        <div style="background: rgba(0,0,0,0);" class="activities">
+        <!-- Tophosts Start -->
+        {% include 'base/tophost.html' %}
+        <!-- Tophosts End -->
 
         <!-- Activities Start -->
         {% include 'base/activity_component.html' %}
-
         <!-- Activities End -->
+        </div>
       </div>
     </main>
 {% endblock content %}

@@ -17,7 +17,7 @@
               </a>
               <h3>Study Room</h3>
             </div>
-            {% if room.host == request.user %}
+            {% if room.host == request.user or request.user in room.moderators.all %}
             <div class="room__topRight">
               <a href="{% url 'update-room' room.id %}">
                 <svg
@@ -53,12 +53,24 @@
                   ></path>
                 </svg>
               </a>
+              <a href="{% url 'assign_moderators' room.id %}">
+                Assign Moderators
+              </a>
             </div>
             {% endif %}
 
           </div>
           <div class="room__box scroll">
             <div class="room__header scroll">
+
+            <h2>Moderators:</h2>
+            <ul>
+              {% for moderator in room.moderators.all %}
+              <li>{{ moderator.username }}</li>
+              {% endfor %}
+            </ul>
+
+
               <div class="room__info">
                 <h3>{{room.name}}</h3>
                 <br>
@@ -68,7 +80,7 @@
               <div class="room__hosted">
                 <span>{{room.created|timesince}} ago</span>
                 <p>Hosted By</p>
-                <a href="{% url 'profile' room.host.id%}" class="room__author">
+                <a href="{% url 'profile' room.host.username%}" class="room__author">
                   <div class="avatar avatar--small">
                     <img src="{{room.host.avatar.url}}" />
                   </div>
@@ -95,16 +107,16 @@
                       </a>
                       <span class="thread__date">{{message.created|timesince}} ago</span>
                     </div>
-                    {% if request.user == message.user %}
+                    {% if request.user == message.user or room.host == request.user or request.user in room.moderators.all %}
                     <a href="{% url 'delete-message' message.id %}">
-                    <div class="thread__delete">
-                      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                        <title>remove</title>
-                        <path
-                          d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"
-                        ></path>
-                      </svg>
-                    </div>
+                      <div class="thread__delete">
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                          <title>remove</title>
+                          <path
+                            d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"
+                          ></path>
+                        </svg>
+                      </div>
                     </a>
                     {% endif %}
                   </div>

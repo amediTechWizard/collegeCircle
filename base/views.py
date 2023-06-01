@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .models import Room, Topic, Message, User, LikeRoom, FollowersCount
+from .models import Room, Topic, Message, User, LikeRoom, FollowersCount, TopicFollowersCount
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import RoomForm, userForm, MyUserCreationForm
 from django.urls import reverse
+import random
 
 # Create your views here.
 
@@ -64,21 +65,36 @@ def registerPage(request):
     return render(request, 'base/login_register.html', {'form': form})
 
 def home(request):
-    q = request.GET.get('q') if request.GET.get('q') != None else ''
-
+    q = request.GET.get('q') if request.GET.get('q') else ''
 
     rooms = Room.objects.filter(
-    Q(topic__name__icontains=q) &
-    Q(name__icontains=q) |
-    Q(description__icontains=q)
+        Q(topic__name__icontains=q) |
+        Q(name__icontains=q) |
+        Q(description__icontains=q)
     )
 
-    topics = Topic.objects.all()[0:5]
+    topics = Topic.objects.all()[:5]
     room_count = rooms.count()
-    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
+    room_messages = Message.objects.filter(room__topic__name__icontains=q)
 
-    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count, 'room_messages': room_messages}
-    return render(request, 'base/home.html', context)
+    current_user = request.user
+
+    # Get suggested users
+    users_not_following = User.objects.exclude(
+        username__in=FollowersCount.objects.filter(follower=current_user.username).values('user')
+    ).exclude(username=current_user.username)  # Exclude current user's username
+    users_available = list(users_not_following)
+    sample_size = min(5, len(users_available))  # Adjust sample size if necessary
+    suggested_users = random.sample(users_available, sample_size)
+
+    context = {
+        'rooms': rooms,
+        'topics': topics,
+        'room_count': room_count,
+        'room_messages': room_messages,
+        'suggested_users': suggested_users
+    }
+    return render(request, 'base/home.html', context)    
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
@@ -121,7 +137,7 @@ def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
     topics = Topic.objects.all()
-    if request.user != room.host:
+    if request.user != room.host and not request.user.is_superuser and request.user not in room.moderators.all():
         return HttpResponse('You are not allowed here!!')
 
     if request.method == 'POST':
@@ -164,7 +180,7 @@ def profile(request, username):
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
 
-    if request.user != room.host:
+    if request.user != room.host and not request.user.is_superuser and request.user not in room.moderators.all():
         return HttpResponse('You are not allowed here!!')
 
     if request.method == 'POST':
@@ -172,12 +188,13 @@ def deleteRoom(request, pk):
         return redirect('home')
     return render(request, 'base/delete.html', {'obj':room})
 
-
 @login_required(login_url='login')
 def deleteMessage(request, pk):
     message = Message.objects.get(id=pk)
+    room = message.room
 
-    if request.user != message.user:
+    if request.user != message.user and not request.user != room.host and not request.user.is_superuser and request.user not in room.moderators.all():
+    # if request.user != message.user:
         return HttpResponse('You are not allowed here!!')
 
     if request.method == 'POST':
@@ -245,3 +262,38 @@ def follow(request):
             return redirect('/profile/'+user)
     else:
         return redirect('home')
+    
+@login_required(login_url='login')
+def follow_topic(request):
+    if request.method == 'POST':
+        follower = request.POST['follower']
+        topic_name = request.POST['topic_name']
+
+        if TopicFollowersCount.objects.filter(follower=follower, topic_name=topic_name).first():
+            delete_follower = TopicFollowersCount.objects.get(follower=follower, topic_name=topic_name)
+            delete_follower.delete()
+            return redirect('home')
+        else:
+            new_follower = TopicFollowersCount.objects.create(follower=follower, topic_name=topic_name)
+            new_follower.save()
+            return redirect('home')
+    else:
+        return redirect('home')
+    
+@login_required(login_url='login')
+def assign_moderators(request, pk):
+    room = get_object_or_404(Room, id=pk)
+    
+    # Ensure that only the room owner or an administrator can assign moderators
+    if request.user != room.host and not request.user.is_superuser and request.user not in room.moderators.all():
+        return HttpResponse('You are not allowed here!!')
+
+    if request.method == 'POST':
+        moderators = request.POST.getlist('moderators')
+        room.moderators.set(moderators)  # Set the selected moderators for the room
+        return redirect('room', pk=pk)
+        
+    users = User.objects.all()
+    context = {'room': room, 'users': users}
+    return render(request, 'base/assign_moderators.html', context)
+    
