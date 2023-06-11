@@ -1,0 +1,53 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<main class="layout">
+  <div class="container">
+    <div class="layout__box">
+      <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+          <a href="{% url 'home' %}">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+            >
+              <title>arrow-left</title>
+              <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z"
+              ></path>
+            </svg>
+          </a>
+          <h3>Your Notifications</h3>
+        </div>
+      </div>
+
+      <div class="activities-page layout__body">
+        {% if notifications %}
+          {% regroup notifications by created_at|date:"F Y" as notification_groups %}
+          {% for group in notification_groups %}
+            <h4>{{ group.grouper }}</h4>
+            {% for notification in group.list %}
+              <div class="notification">
+                <div class="notification__avatar">
+                  <img src="{{ notification.follower.avatar.url }}" alt="Avatar">
+                </div>
+                <div class="notification__details">
+                    <p class="notification__message">
+                        <a href="/profile/{{ notification.follower.username }}" class="notification__username">{{ notification.follower.username }}</a> started following you.
+                      </p>
+                  <span class="notification__timestamp">{{ notification.created_at }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          {% endfor %}
+        {% else %}
+          <p class="notification__empty"></p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}
