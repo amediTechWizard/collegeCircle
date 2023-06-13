@@ -91,8 +91,10 @@ def notifications(request):
     user.notification_count = 0
     user.save()
 
+    # Fetch notifications for follow, upvote, and downvote types
     notifications = Notification.objects.filter(user=user).order_by('-created_at')
     return render(request, 'base/user_notifications.html', {'notifications': notifications})
+
 
 @login_required(login_url='login')
 def mark_notifications_as_read(request):
@@ -358,7 +360,7 @@ def follow(request):
             user = User.objects.get(username=user_username)
 
             # Create a notification for the user being followed
-            new_follow = Notification.objects.create(follower=follower, user=user)
+            new_follow = Notification.objects.create(follower=follower, user=user, notification_type=Notification.FOLLOW)
             new_follow.save()
             user.notification_count += 1
             user.save()
@@ -370,7 +372,6 @@ def follow(request):
         return redirect('home')
 
 
-    
 @login_required(login_url='login')
 def follow_topic(request):
     if request.method == 'POST':
@@ -434,8 +435,6 @@ def ban_user(request, pk):
     else:
         return HttpResponse('You are not allowed to ban users in this room.')
 
-
-        
 @login_required(login_url='login')
 def unban_user(request, pk, user_id):
     room = Room.objects.get(id=pk)
@@ -458,6 +457,18 @@ def upvote_message(request, message_id):
                 message.upvotes.add(request.user)
                 message.no_of_upvotes += 1
                 message.save()
+
+                # Create a notification for the user whose message was upvoted
+                new_notification = Notification.objects.create(
+                    follower=request.user,
+                    user=message.user,
+                    notification_type='upvote',
+                    message=message
+                )
+                new_notification.save()
+                message.user.notification_count += 1
+                message.user.save()
+
                 messages.success(request, "You have given an Upvote to the message")
             return redirect('room', pk=message.room.id)
         except Message.DoesNotExist:
@@ -472,7 +483,20 @@ def downvote_message(request, message_id):
                 message.downvotes.add(request.user)
                 message.no_of_downvotes += 1
                 message.save()
+
+                # Create a notification for the user whose message was downvoted
+                new_notification = Notification.objects.create(
+                    follower=request.user,
+                    user=message.user,
+                    notification_type='downvote',
+                    message=message
+                )
+                new_notification.save()
+                message.user.notification_count += 1
+                message.user.save()
+
                 messages.success(request, "You have given a Downvote to the message")
             return redirect('room', pk=message.room.id)
         except Message.DoesNotExist:
             return HttpResponse(status=404)
+

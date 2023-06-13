@@ -30,17 +30,34 @@
           {% for group in notification_groups %}
             <h4>{{ group.grouper }}</h4>
             {% for notification in group.list %}
-              <div class="notification">
-                <div class="notification__avatar">
-                  <img src="{{ notification.follower.avatar.url }}" alt="Avatar">
-                </div>
-                <div class="notification__details">
-                    <p class="notification__message">
-                        <a href="/profile/{{ notification.follower.username }}" class="notification__username">{{ notification.follower.username }}</a> started following you.
-                      </p>
-                  <span class="notification__timestamp">{{ notification.created_at }}</span>
-                </div>
+            <div class="notification {% if not notification.is_read %}notification--unread{% endif %}">
+              <div class="notification__avatar">
+                <img src="{{ notification.follower.avatar.url }}" alt="Avatar">
               </div>
+              <div class="notification__details">
+                <p class="notification__text">
+                  {% if notification.notification_type == 'follow' %}
+                  <p class="notification__message">
+                    <a href="/profile/{{ notification.follower.username }}" class="notification__username">{{ notification.follower.username }}</a> started following you.
+                  </p>
+                  <span class="notification__timestamp">{{ notification.created_at }}</span>
+                  {% elif notification.notification_type == 'upvote' %}
+                  <p class="notification__message">
+                    <a href="/profile/{{ notification.follower.username }}" class="notification__username">{{ notification.follower.username }}</a> upvoted your message.
+                  </p>
+                  <span class="notification__message">{{ notification.message }}</span><br>
+                  <span class="notification__timestamp">{{ notification.created_at }}</span>
+                  {% elif notification.notification_type == 'downvote' %}
+                  <p class="notification__message">
+                    <a href="/profile/{{ notification.follower.username }}" class="notification__username">{{ notification.follower.username }}</a> downvoted your message.
+                  </p>
+                  <span class="notification__message">{{ notification.message }}</span><br>
+                  <span class="notification__timestamp">{{ notification.created_at }}</span>
+                  {% endif %}
+                </p>
+                <p class="notification__time">{{ notification.created_at|timesince }} ago</p>
+              </div>
+            </div>
             {% endfor %}
           {% endfor %}
         {% else %}

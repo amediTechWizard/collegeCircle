@@ -26,7 +26,6 @@
               {% endif %}
               <span style="color: #b2bdbd;; font-size: 14px;"><span id="follow-count">{{user_following}}</span> Following</span>
               <span style="color: #b2bdbd;; font-size: 14px;"><span id="follow-count">{{user_rooms}}</span> Rooms</span></p>
-
             {% if request.user == user %}
               <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
             {% else %}

@@ -119,8 +119,26 @@ class TopicFollowersCount(models.Model):
     def __str__(self):
         return self.topic_name
 
+# class Notification(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     follower = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     is_read = models.BooleanField(default=False)
+
 class Notification(models.Model):
+    FOLLOW = 'follow'
+    UPVOTE = 'upvote'
+    DOWNVOTE = 'downvote'
+
+    NOTIFICATION_TYPE_CHOICES = (
+        (FOLLOW, 'Follow'),
+        (UPVOTE, 'Upvote'),
+        (DOWNVOTE, 'Downvote'),
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     follower = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPE_CHOICES, null=True)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, null=True, blank=True)
